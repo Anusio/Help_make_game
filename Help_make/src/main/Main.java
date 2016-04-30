@@ -27,7 +27,7 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Inicial window = new Inicial();
+					new Inicial();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
