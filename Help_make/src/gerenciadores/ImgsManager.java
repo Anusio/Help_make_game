@@ -1,13 +1,10 @@
 package gerenciadores;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import make.Bounts;
 import structs.Pro_sprite;
 
 public class ImgsManager {
@@ -60,12 +57,12 @@ public class ImgsManager {
 	}
 
 	public void paint(Graphics g, float zoom, int x, int y) {
-		if (zoom < 1) {
-			if (zoom == 0) {
-				zoom = -1;
-			}
-			zoom = 1 / (-zoom);
-		}
+//		if (zoom < 1) {
+//			if (zoom == 0) {
+//				zoom = -1;
+//			}
+//			zoom = 1 / (-zoom);
+//		}
 		try {
 			thearray.acquire();
 			for (Pro_sprite i : allimgs) {

@@ -26,4 +26,14 @@ public class Bounts {
 		h++;
 	}
 
+	public boolean hitTest(int x2, int y2, float zoom) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void selected(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

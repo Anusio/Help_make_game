@@ -16,27 +16,29 @@ import canvas.CPanel;
 import make.Bounts;
 import make.Crop;
 
-public class ProgramManager implements ActionListener{
-	
+public class ProgramManager implements ActionListener {
+
 	private ImgsManager imgsManager = new ImgsManager();
 	private CPanel animate = null;
 	private Timer timer = null;
 	private int fps = 30;
 	private ArrayList<Bounts> bordas = new ArrayList<>();
-	
+	private FileManager fileManager = new FileManager();
+
 	private float zoom = 1f;
 	private int g_x = 0;
 	private int g_y = 0;
-	
+	private Click mouse = new Click();
+
 	public ProgramManager() {
 
 	}
-	
+
 	public void setAnimate(CPanel animate) {
 		this.animate = animate;
 		animate.setProgram(this);
 	}
-	
+
 	public void startAnimation() {
 		if (timer == null) {
 			timer = new Timer(1000 / fps, this);
@@ -50,32 +52,36 @@ public class ProgramManager implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		animate.repaint();
 	}
-	
-	public void draw(Graphics g) {
-//		zoom -= 0.1;
-//		System.out.println(zoom);
-		imgsManager.paint(g, zoom, g_x, g_y);
 
+	public void draw(Graphics g) {
 		float zom = zoom;
 		if (zom < 1) {
-			if (zom >= -0.1) {
-				zom = -1f;
-			}
+
 			zom = 1 / (-zom);
 		}
+		imgsManager.paint(g, zom, g_x, g_y);
+
 		g.setColor(new Color(255, 0, 0, 255));
 		for (Bounts b : bordas) {
+			if (mouse.btn) {
+				if(b.hitTest(mouse.x, mouse.y, zoom)){
+					b.selected(true);
+				}else{
+					b.selected(false);
+				}
+			}
 			g.drawRect((int) (zom * (b.x + g_x)), (int) (zom * (b.y + g_y)), (int) (b.w * zom), (int) (b.h * zom));
 		}
-		
+
 	}
-	
-	/*Completamente acao*/
-	public void acao_open(String path) throws IOException {
-		BufferedImage image = ImageIO.read(new File(path));
+
+	/* Completamente acao */
+	public void acao_open() throws IOException {
+		BufferedImage image = ImageIO.read(new File(fileManager.open_image()));
 		imgsManager.add(image);
+
 	}
-	
+
 	public void acao_auto_cut_bordas() {
 		Crop crop = new Crop();
 		BufferedImage tocrop;
@@ -85,24 +91,34 @@ public class ProgramManager implements ActionListener{
 		crop.setImageToCrop(tocrop);
 		crop.setProspectNum(1);
 		crop.gemBounts();
-		bordas  = crop.getBounts();
+		bordas = crop.getBounts();
+	}
+
+	public void wminus() {
+		zoom -= .2;
+		if (zoom < 1) {
+			if (zoom >= -1) {
+				zoom = -1;
+			}
+		}
+	}
+
+	public void wplus() {
+		zoom += .2;
+
+		if (zoom < 1) {
+			if (zoom >= -1) {
+				zoom = 1;
+			}
+		}
+	}
+
+	public void click(int x, int y) {
+
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class Click {
+	public int x, y;
+	public boolean btn = false;
+}
