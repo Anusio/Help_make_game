@@ -13,7 +13,7 @@ import java.util.Comparator;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import gerenciadores.Pro_sprite;
+import structs.Pro_sprite;
 
 public class Crop {
 	private BufferedImage imageToCrop;

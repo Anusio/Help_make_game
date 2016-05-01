@@ -1,4 +1,4 @@
-package gerenciadores;
+package structs;
 
 import java.awt.image.BufferedImage;
 
@@ -16,14 +16,6 @@ public class Pro_sprite {
 		x = y = 0;
 		w = image.getWidth(null);
 		h = image.getHeight(null);
-	}
-
-	public BufferedImage getImage() {
-		return image;
-	}
-
-	public void setImage(BufferedImage image) {
-		this.image = image;
 	}
 
 }

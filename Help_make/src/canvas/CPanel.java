@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import gerenciadores.ProgramManager;
+
 @SuppressWarnings("serial")
 public class CPanel extends JPanel {
 
@@ -14,6 +16,7 @@ public class CPanel extends JPanel {
 	private int _w = 0;
 
 	private BufferedImage background;
+	private ProgramManager programManager;
 
 	@Override
 	public void paint(Graphics g) {
@@ -25,6 +28,9 @@ public class CPanel extends JPanel {
 		// g.fillRect(0, 0, _w, _h);
 		g.drawImage(background, 0, 0, null);
 		// info(g);
+		if (programManager != null) {
+			programManager.draw(g);
+		}
 	}
 
 	private void setBackGroundImage() {
@@ -53,6 +59,10 @@ public class CPanel extends JPanel {
 	private void info(Graphics g) {
 		g.setColor(new Color(0, 0, 0));
 		g.drawString("Color", 100, 100);
+	}
+
+	public void setProgram(ProgramManager programManager) {
+		this.programManager = programManager;
 	}
 
 }

@@ -15,19 +15,27 @@ import javax.swing.JSplitPane;
 import javax.swing.border.LineBorder;
 
 import canvas.CPanel;
+import gerenciadores.ProgramManager;
+
 import javax.swing.JTabbedPane;
 import javax.swing.border.BevelBorder;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
 
 public class Inicial {
 
-	public JFrame frmHelpsprite;
-
+	private JFrame frmHelpsprite;
+	private ProgramManager programManager = new ProgramManager();
+	private CPanel canvas;
 	/**
 	 * Create the application.
 	 */
 	public Inicial() {
 		initialize();
 		frmHelpsprite.setVisible(true);
+		programManager.setAnimate(canvas);
+		programManager.startAnimation();
 	}
 
 	/**
@@ -65,12 +73,29 @@ public class Inicial {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		ferramentas.add(tabbedPane);
 		
-		JTabbedPane tabAction = new JTabbedPane(JTabbedPane.TOP);
-		tabAction.setToolTipText("");
-		tabbedPane.addTab("Ações", null, tabAction, null);
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Ação", null, panel, null);
 		
-		JTabbedPane tabbedPane_2 = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.addTab("Propriedade", null, tabbedPane_2, null);
+		JButton btnAbrir = new JButton("Abrir");
+		btnAbrir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					programManager.acao_open("teste.png");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		panel.add(btnAbrir);
+		
+		JButton btnBordas = new JButton("bordas");
+		btnBordas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				programManager.acao_auto_cut_bordas();
+			}
+		});
+		panel.add(btnBordas);
 		
 		JPanel pnItem = new JPanel();
 		pnItem.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -93,7 +118,7 @@ public class Inicial {
 		JButton btnOpes = new JButton("Op\u00E7\u00F5es");
 		info.add(btnOpes, BorderLayout.EAST);
 		
-		CPanel canvas = new CPanel();
+		canvas = new CPanel();
 		canvas.setBorder(new LineBorder(new Color(0, 0, 0)));
 		view.add(canvas, BorderLayout.CENTER);
 	}
