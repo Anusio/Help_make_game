@@ -21,6 +21,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.LineBorder;
 
 import canvas.CPanelImage;
+import javax.swing.JScrollPane;
 
 public class FileChooserImg implements ActionListener{
 
@@ -48,8 +49,11 @@ public class FileChooserImg implements ActionListener{
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		panel = new CPanelImage(inicial);
-		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		
+		scrollPane.setViewportView(panel);
 		
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.NORTH);

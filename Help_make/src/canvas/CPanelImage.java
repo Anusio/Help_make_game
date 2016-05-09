@@ -1,6 +1,7 @@
 package canvas;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -27,11 +28,14 @@ public class CPanelImage extends JPanel {
 		newFolder(thepath);
 		g.setColor(new Color(255, 255, 255));
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		int x, y, h, w;
+		int x = 0, y = 0, h = 0, w = 0;
 		int box = 128;
 		int dist = 20;
 		int a = 0;
-		int prow = 5;
+		int prow = this.getWidth()/(box+dist);
+		if(prow < 1){
+			prow = 1;
+		}
 		for (imgFile i : files) {
 			x = ((a % prow) * (box + dist));
 			y = ((a / prow) * (box + dist));
@@ -47,6 +51,7 @@ public class CPanelImage extends JPanel {
 			// hittest and thepth is this
 			a++;
 		}
+		this.setPreferredSize(new Dimension(prow, y+h+20));
 	}
 
 	public void setThepath(String thepath) {
