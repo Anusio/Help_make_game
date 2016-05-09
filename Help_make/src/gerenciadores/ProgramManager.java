@@ -61,18 +61,24 @@ public class ProgramManager implements ActionListener {
 		}
 		imgsManager.paint(g, zom, g_x, g_y);
 
-		g.setColor(new Color(255, 0, 0, 255));
+		Color selec = new Color(0, 255, 0, 255);
+		Color nselec = new Color(255, 0, 0, 255);
 		for (Bounts b : bordas) {
 			if (mouse.btn) {
-				if(b.hitTest(mouse.x, mouse.y, zoom)){
-					b.selected(true);
+				if(b.hitTest(mouse.x, mouse.y, zom)){
+					b.setSelected(true);
 				}else{
-					b.selected(false);
+					b.setSelected(false);
 				}
+			}
+			if(b.isSelected()){
+				g.setColor(selec);
+			}else{
+				g.setColor(nselec);
 			}
 			g.drawRect((int) (zom * (b.x + g_x)), (int) (zom * (b.y + g_y)), (int) (b.w * zom), (int) (b.h * zom));
 		}
-
+		mouse.btn = false;
 	}
 
 	/* Completamente acao */
@@ -114,7 +120,9 @@ public class ProgramManager implements ActionListener {
 	}
 
 	public void click(int x, int y) {
-
+		mouse.x = x;
+		mouse.y = y;
+		mouse.btn = true;
 	}
 }
 
