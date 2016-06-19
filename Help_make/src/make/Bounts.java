@@ -27,15 +27,17 @@ public class Bounts {
 		h++;
 	}
 
-	public boolean hitTest(int x2, int y2, float zoom) {
-		return (x2 > x*zoom && x2 < (x + w)*zoom) && (y2 > y*zoom && y2 < (y + h)*zoom);
-	}
-
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public boolean hitTest(int x2, int y2, int g_x, int g_y, float zoom) {
+		int x = this.x + g_x;
+		int y = this.y + g_y;
+		return (x2 > x * zoom && x2 < (x + w) * zoom) && (y2 > y * zoom && y2 < (y + h) * zoom);
 	}
 }

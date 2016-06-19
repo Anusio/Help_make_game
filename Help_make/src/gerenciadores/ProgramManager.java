@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import canvas.CPanel;
 import make.Bounts;
 import make.Crop;
+import structs.Click;
 
 public class ProgramManager implements ActionListener {
 
@@ -29,6 +30,10 @@ public class ProgramManager implements ActionListener {
 	private int g_x = 0;
 	private int g_y = 0;
 	private Click mouse = new Click();
+	private int mdx;
+	private int mdy;
+	private int mdxa;
+	private int mdya;
 
 	public ProgramManager() {
 
@@ -65,15 +70,15 @@ public class ProgramManager implements ActionListener {
 		Color nselec = new Color(255, 0, 0, 255);
 		for (Bounts b : bordas) {
 			if (mouse.btn) {
-				if(b.hitTest(mouse.x, mouse.y, zom)){
+				if (b.hitTest(mouse.x, mouse.y, g_x, g_y, zom)) {
 					b.setSelected(true);
-				}else{
+				} else {
 					b.setSelected(false);
 				}
 			}
-			if(b.isSelected()){
+			if (b.isSelected()) {
 				g.setColor(selec);
-			}else{
+			} else {
 				g.setColor(nselec);
 			}
 			g.drawRect((int) (zom * (b.x + g_x)), (int) (zom * (b.y + g_y)), (int) (b.w * zom), (int) (b.h * zom));
@@ -83,9 +88,11 @@ public class ProgramManager implements ActionListener {
 
 	/* Completamente acao */
 	public void acao_open() throws IOException {
-		BufferedImage image = ImageIO.read(new File(fileManager.open_image()));
-		imgsManager.add(image);
-
+		String temp = fileManager.open_image();
+		if (temp != null) {
+			BufferedImage image = ImageIO.read(new File(temp));
+			imgsManager.add(image);
+		}
 	}
 
 	public void acao_auto_cut_bordas() {
@@ -124,9 +131,19 @@ public class ProgramManager implements ActionListener {
 		mouse.y = y;
 		mouse.btn = true;
 	}
-}
 
-class Click {
-	public int x, y;
-	public boolean btn = false;
+	public void drag(int x, int y) {
+		g_x = (x - mdx);
+		g_y = (y - mdy);
+	}
+
+	public void press(int x, int y) {
+		mdx = x - g_x;
+		mdy = y - g_y;
+	}
+
+	public void releasse(int x, int y) {
+		mdxa = x;
+		mdya = y;
+	}
 }

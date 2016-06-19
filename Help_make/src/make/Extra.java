@@ -9,7 +9,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import blur.GaussianFilter;
+import terceiros.blur.GaussianFilter;
 
 public class Extra {
 	private BufferedImage imageToExtra;

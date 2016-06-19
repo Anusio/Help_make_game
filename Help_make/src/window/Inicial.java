@@ -3,6 +3,15 @@ package window;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,25 +21,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 
 import canvas.CPanel;
+import gerenciadores.ConfigManager;
 import gerenciadores.ProgramManager;
-
-import javax.swing.JTabbedPane;
-import javax.swing.border.BevelBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.io.IOException;
-import java.awt.event.ActionEvent;
-import java.awt.GridLayout;
+import javax.swing.JScrollPane;
 
 public class Inicial {
-
+	public static ConfigManager conf;
 	private JFrame frmHelpsprite;
 	private ProgramManager programManager = new ProgramManager();
 	private CPanel canvas;
@@ -38,6 +39,7 @@ public class Inicial {
 	 * Create the application.
 	 */
 	public Inicial() {
+		conf = new ConfigManager();
 		initialize();
 		frmHelpsprite.setVisible(true);
 		programManager.setAnimate(canvas);
@@ -158,16 +160,19 @@ public class Inicial {
 		JButton btnOpes = new JButton("Op\u00E7\u00F5es");
 		info.add(btnOpes, BorderLayout.EAST);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		view.add(scrollPane, BorderLayout.CENTER);
+		
 		canvas = new CPanel();
+		scrollPane.setViewportView(canvas);
 		canvas.setBorder(new LineBorder(new Color(0, 0, 0)));
-		view.add(canvas, BorderLayout.CENTER);
 		
 		canvas.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (e.getWheelRotation() < 0) {
+				if (e.getWheelRotation() > 0) {
 					programManager.wminus();
 				}
-				if (e.getWheelRotation() > 0) {
+				if (e.getWheelRotation() < 0) {
 					programManager.wplus();
 				}
 			}
@@ -181,17 +186,20 @@ public class Inicial {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				//panel.move(e.getX(), e.getY());
+				programManager.drag(e.getX(), e.getY());
 			}
 		});
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				//panel.click(e.getX(), e.getY(), e.getButton());
-				
+				programManager.press(e.getX(), e.getY());
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				programManager.releasse(e.getX(),e.getY());
+				
 				if(e.getButton() == MouseEvent.BUTTON1){
 					programManager.click(e.getX(),e.getY());
 				}

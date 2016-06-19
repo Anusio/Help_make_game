@@ -57,12 +57,7 @@ public class ImgsManager {
 	}
 
 	public void paint(Graphics g, float zoom, int x, int y) {
-//		if (zoom < 1) {
-//			if (zoom == 0) {
-//				zoom = -1;
-//			}
-//			zoom = 1 / (-zoom);
-//		}
+
 		try {
 			thearray.acquire();
 			for (Pro_sprite i : allimgs) {
