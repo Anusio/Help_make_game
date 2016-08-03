@@ -23,11 +23,11 @@ public class CPanel extends JPanel {
 		setBackGroundImage();
 		_h = getHeight();
 		_w = getWidth();
-		// g.drawRect(0, 0, _w, _h);
-		// g.setColor(new Color(255, 255, 255, 255));
-		// g.fillRect(0, 0, _w, _h);
+		g.setColor(Color.white);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(Color.black);
 		g.drawImage(background, 0, 0, null);
-		// info(g);
+
 		if (programManager != null) {
 			programManager.draw(g);
 		}
@@ -53,12 +53,6 @@ public class CPanel extends JPanel {
 				g.fillRect(i * tam, j * tam, tam, tam);
 			}
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private void info(Graphics g) {
-		g.setColor(new Color(0, 0, 0));
-		g.drawString("Color", 100, 100);
 	}
 
 	public void setProgram(ProgramManager programManager) {

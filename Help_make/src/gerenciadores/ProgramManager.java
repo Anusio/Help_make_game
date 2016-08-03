@@ -1,18 +1,29 @@
+/**
+ * cortar >> corta automatico ou selecionado por mao
+ * gerar spritesheet >> efeitos in como blur ou color >> ordenar em quadrados igualmente espacados
+ * gerar animacoes >> selecionar e gerar nomes e sequencias em txt
+ * gerar bones >> animacoes boneadas e bones from spriteshet, cortes em txt
+ * 
+ */
 package gerenciadores;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import canvas.CPanel;
+import javafx.scene.input.ZoomEvent;
 import make.Bounts;
 import make.Crop;
 import structs.Click;
@@ -26,19 +37,103 @@ public class ProgramManager implements ActionListener {
 	private ArrayList<Bounts> bordas = new ArrayList<>();
 	private FileManager fileManager = new FileManager();
 
-	private float zoom = 1f;
-	private int g_x = 0;
-	private int g_y = 0;
-	private Click mouse = new Click();
+	private static float zoom = 1f;
+	private static float zoom2 = 1f;
+	private static int g_x = 0;
+	private static int g_y = 0;
 	private int mdx;
 	private int mdy;
-	private int mdxa;
-	private int mdya;
+
+	public static Click mouse = new Click();
 
 	public ProgramManager() {
 
 	}
 
+	public static int getRealX(double x) {
+		return (int) (x * zoom);
+	}
+
+	public static int getRealY(double y) {
+		return (int) (y * zoom);
+	}
+
+	public static int getReal_X(double x) {
+		return (int) ((x - g_x));
+	}
+
+	public static int getReal_Y(double y) {
+		return (int) ((y - g_y));
+	}
+
+	public static int getReal_Z(double x) {
+		return (int) (x * zoom);
+	}
+
+	/* ACTIONS */
+	/* End */
+	public void wminus() {
+		zoom2 -= .2;
+		if (zoom2 < 1 && zoom2 > -1) {
+			zoom2 = -1;
+		}
+		if (zoom2 < 1) {
+			zoom = 1 / (-zoom2);
+		} else {
+			zoom = zoom2;
+		}
+	}
+
+	public void wplus() {
+		zoom2 += .2;
+		if (zoom2 < 1) {
+			zoom = 1 / (-zoom2);
+		} else {
+			zoom = zoom2;
+		}
+	}
+
+	public void clickl(int x, int y) {
+		mouse.x = getReal_X(x);
+		mouse.y = getReal_Y(y);
+		mouse.btnsingle = true;
+	}
+
+	public void move(int x, int y) {
+		mouse.x = getReal_X(x);
+		mouse.y = getReal_Y(y);
+	}
+
+	public void drag(int x, int y) {
+		if (mouse.btnr) {
+			g_x = (x - mdx);
+			g_y = (y - mdy);
+		}
+		mouse.x = getReal_X(x);
+		mouse.y = getReal_Y(y);
+	}
+
+	public void press(int x, int y, int btn) {
+		if (btn == MouseEvent.BUTTON3) {
+			mouse.btnr = true;
+		}
+		if (btn == MouseEvent.BUTTON1) {
+			mouse.btnl = true;
+		}
+		mdx = x - g_x;
+		mdy = y - g_y;
+	}
+
+	public void releasse(int x, int y, int btn) {
+		if (btn == MouseEvent.BUTTON3) {
+			mouse.btnr = false;
+		}
+		if (btn == MouseEvent.BUTTON1) {
+			mouse.btnl = false;
+		}
+	}
+
+	/**/
 	public void setAnimate(CPanel animate) {
 		this.animate = animate;
 		animate.setProgram(this);
@@ -59,18 +154,20 @@ public class ProgramManager implements ActionListener {
 	}
 
 	public void draw(Graphics g) {
-		float zom = zoom;
-		if (zom < 1) {
 
-			zom = 1 / (-zom);
-		}
-		imgsManager.paint(g, zom, g_x, g_y);
+		g.translate(g_x, g_y);
+		g.drawLine(-300, 0, 300, 0);
+		g.drawLine(0, -300, 0, 300);
+		// g.drawString("x " + g_x + " y " + g_y + " z " + zoom, 0, 10);
+		// g.drawString("x " + mouse.x + " y " + mouse.y, 0, 30);
+
+		imgsManager.paint(g);
 
 		Color selec = new Color(0, 255, 0, 255);
 		Color nselec = new Color(255, 0, 0, 255);
 		for (Bounts b : bordas) {
-			if (mouse.btn) {
-				if (b.hitTest(mouse.x, mouse.y, g_x, g_y, zom)) {
+			if (mouse.btnsingle) {
+				if (b.hitTest(mouse.x, mouse.y, g_x, g_y, zoom)) {
 					b.setSelected(true);
 				} else {
 					b.setSelected(false);
@@ -81,9 +178,9 @@ public class ProgramManager implements ActionListener {
 			} else {
 				g.setColor(nselec);
 			}
-			g.drawRect((int) (zom * (b.x + g_x)), (int) (zom * (b.y + g_y)), (int) (b.w * zom), (int) (b.h * zom));
+			g.drawRect(getRealX(b.x+imgsManager.getMinx()), getRealY(b.y+imgsManager.getMiny()), getReal_Z(b.w),getReal_Z(b.h));
 		}
-		mouse.btn = false;
+		mouse.btnsingle = false;
 	}
 
 	/* Completamente acao */
@@ -95,55 +192,55 @@ public class ProgramManager implements ActionListener {
 		}
 	}
 
-	public void acao_auto_cut_bordas() {
+	public void acao_auto_cut_bordas(int n) {
 		Crop crop = new Crop();
 		BufferedImage tocrop;
 		imgsManager.GetMetrics();
 		tocrop = new BufferedImage(imgsManager.getW(), imgsManager.getH(), BufferedImage.TYPE_INT_ARGB);
 		imgsManager.paint_img_origin(tocrop.getGraphics());
 		crop.setImageToCrop(tocrop);
-		crop.setProspectNum(1);
+		crop.setProspectNum(n);
 		crop.gemBounts();
 		bordas = crop.getBounts();
 	}
 
-	public void wminus() {
-		zoom -= .2;
-		if (zoom < 1) {
-			if (zoom >= -1) {
-				zoom = -1;
+	public void acao_cortar_bordas() {
+
+		imgsManager.cortar(bordas);
+		bordas.clear();
+	}
+
+	public void limparsel() {
+		Bounts remove = null;
+		for (Bounts b : bordas) {
+			if (b.isSelected()) {
+				remove = b;
 			}
+		}
+		if (remove != null) {
+			bordas.remove(remove);
 		}
 	}
 
-	public void wplus() {
-		zoom += .2;
-
-		if (zoom < 1) {
-			if (zoom >= -1) {
-				zoom = 1;
-			}
+	public void limparAll() {
+		if (ask("Deletar seleções de corte?")) {
+			bordas.clear();
 		}
 	}
 
-	public void click(int x, int y) {
-		mouse.x = x;
-		mouse.y = y;
-		mouse.btn = true;
+	private boolean ask(String string) {
+		int q = JOptionPane.showConfirmDialog(null, string, "", JOptionPane.YES_NO_OPTION);
+		if (q == JOptionPane.YES_OPTION) {
+			return true;
+		}
+		return false;
 	}
 
-	public void drag(int x, int y) {
-		g_x = (x - mdx);
-		g_y = (y - mdy);
+	public void resetZoom() {
+		zoom = 1;
 	}
 
-	public void press(int x, int y) {
-		mdx = x - g_x;
-		mdy = y - g_y;
-	}
-
-	public void releasse(int x, int y) {
-		mdxa = x;
-		mdya = y;
+	public void resetOrigem() {
+		g_x = g_y = 0;
 	}
 }
